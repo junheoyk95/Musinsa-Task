@@ -5,8 +5,11 @@
    명령어 sudo apt install openjdk-8-jdk-headless
 2. 프로젝트 빌드
    프로젝트 폴더로 이동 한 후 ./gradlew build 명령어 실행
-3. build/libs 폴더로 이동 후 생성된 자바 파일 실행
-   ex) java -jar musinsa-0.0.1.jar 명령어로 자바 파일 실행 (musinsa-0.0.1.jar 는 예시 파일명입니다.)
+   -> 자바 파일(jar) 생성
+4. build/libs 폴더로 이동 후 생성된 자바 파일 실행
+   ex)
+   build/libs 폴더에서
+   sudo java -jar musinsa-0.0.1.jar 명령어로 자바 파일 실행 (musinsa-0.0.1.jar 는 예시 파일명입니다.)
 
 # mariaDB 스키마
 
