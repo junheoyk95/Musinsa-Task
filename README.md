@@ -16,4 +16,10 @@
 폴더 내에 DB 스키마를 첨부하였습니다.<br/>
 mariaDB.sql
 
+#정상 동작 시 화면
+![1](https://github.com/junheoyk95/Musinsa-Task/assets/100138691/b3466c6e-55b6-40a1-a2a2-376f3f749f07)
+![3](https://github.com/junheoyk95/Musinsa-Task/assets/100138691/eb17dae4-4979-425f-8ff6-261f9fdf566c)
+![4](https://github.com/junheoyk95/Musinsa-Task/assets/100138691/0ad8a2a2-027a-4684-a4c8-a811cd849f9c)
+![2](https://github.com/junheoyk95/Musinsa-Task/assets/100138691/babb5387-e17d-4b87-acbe-c221d4e8e5fc)
+
 
