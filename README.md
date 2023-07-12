@@ -13,7 +13,7 @@
    sudo java -jar musinsa-0.0.1.jar 명령어로 자바 파일 실행 (musinsa-0.0.1.jar 는 예시 파일명입니다.) <br/>
 
 # mariaDB 스키마
-소스 파일내에 DB 스키마를 첨부하였습니다.
+폴더 내에 DB 스키마를 첨부하였습니다.
 mariaDB.sql
 
 
