@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.musinsa.dao.BannerDAO">
+
+    <select id="selectBannerList" resultType="bannerDVO">
+        SELECT *
+        FROM TB_SYS_BANNER
+        ORDER BY BANNER_ORDER
+    </select>
+
+    <select id="selectBannerById" resultType="bannerDVO">
+        SELECT *
+        FROM TB_SYS_BANNER
+        WHERE ID = #{id}
+    </select>
+
+    <select id="selectBannerByImage" resultType="bannerDVO">
+        SELECT *
+        FROM TB_SYS_BANNER
+        WHERE image = #{image}
+    </select>
+
+    <insert id="insertBanner" parameterType="bannerPVO">
+        INSERT
+        INTO TB_SYS_BANNER
+        (
+            IMAGE
+            , TEXT
+            , URL
+            , BANNER_ORDER
+            , REGIST_DT
+        )
+        VALUES
+        (
+            #{image}
+            , #{text}
+            , #{url}
+            , #{bannerOrder}
+            , date_format(now(), '%Y%m%d%H%i%s')
+        )
+    </insert>
+
+    <delete id="deleteBanner" parameterType="bannerPVO">
+        DELETE
+        FROM TB_SYS_BANNER
+        WHERE ID = #{id}
+    </delete>
+
+</mapper>

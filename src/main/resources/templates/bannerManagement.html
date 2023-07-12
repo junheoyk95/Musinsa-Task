@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Banner Upload</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<div class="header" style="padding-top:40px; padding-left:20px">
+    <a href="/" style="font-size: 20px;">Menu Page</a>
+</div>
+
+<div class="container">
+    <h2>Banner Upload</h2>
+        <div class="form-group">
+            <label for="image">Image:</label>
+            <input type="file" class="form-control-file" name="image" id="image" accept="image/*" required>
+        </div>
+        <div class="form-group">
+            <label for="text">Banner Text:</label>
+            <input type="text" class="form-control" name="text" id="text" placeholder="Enter banner text" required>
+        </div>
+        <div class="form-group">
+            <label for="url">Banner Url:</label>
+            <input type="text" class="form-control" name="url" id="url" placeholder="Enter banner link" required>
+        </div>
+        <div class="form-group">
+            <label for="order">Banner 순서:</label>
+            <input type="text" class="form-control" name="order" id="order" placeholder="Enter banner link" required>
+        </div>
+        <button type="submit" class="btn btn-primary" onclick="fnBannerUpload()">Upload</button>
+
+    <hr>
+    <h4>배너 LIST</h4>
+    <div id="bannerTable">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>배너 이미지</th>
+                <th>배너 URL</th>
+                <th>배너 설명</th>
+                <th>배너 순서</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="banner : ${bannerList}">
+                <td th:text="${banner.image}"></td>
+                <td th:text="${banner.url}"></td>
+                <td th:text="${banner.text}"></td>
+                <td th:text="${banner.bannerOrder}"></td>
+                <td>
+                    <button class="btn btn-danger btn-sm"
+                            th:onclick="fnDeleteBanner(/*[[${banner.id}]]*/, /*[[${banner.image}]]*/)">삭제
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script th:inline="javascript">
+
+    function fnBannerUpload() {
+        const formData = new FormData();
+        const imageFile = document.getElementById('image').files[0];
+        const text = document.getElementById('text').value;
+        const url = document.getElementById('url').value;
+        const order = document.getElementById('order').value;
+
+
+        console.log("test : " , imageFile);
+        if(imageFile == undefined){
+            alert("파일을 선택해주세요.");
+            return;
+          }
+        if(url == ''){
+            alert("Url을 입력해주세요.");
+            return;
+          }
+        if(order == ''){
+            alert("순서를 입력해주세요.");
+            return;
+          }
+
+        formData.append("imageFile", imageFile);
+        formData.append("text", text);
+        formData.append("url", url);
+        formData.append("order", order);
+
+        ajaxPost("/bannerManagement/bannerUpload", formData, function(resData) {
+            if (true) {
+                alert("저장되었습니다.");
+            } else {
+                alert("배너 생성 실패");
+            }
+            fnReset();
+            fnGetBannerList();
+          });
+    }
+
+    function fnReset() {
+        document.getElementById('image').value = '';
+        document.getElementById('text').value = '';
+        document.getElementById('url').value = '';
+        document.getElementById('order').value = '';
+    }
+
+    // 메뉴 삭제 함수
+    function fnDeleteBanner(id, image) {
+
+        let params = {
+            id: id,
+            image: image
+          }
+
+        if (confirm("정말로 삭제하시겠습니까?")) {
+            ajaxDelete("/bannerManagement/bannerDelete", params, function(resData) {
+                if (true) {
+                    alert("삭제되었습니다.");
+                } else {
+                    alert("배너 삭제 실패");
+                }
+                fnReset();
+                fnGetBannerList();
+            });
+        }
+    }
+
+    function fnGetBannerList() {
+        // 배너 목록 조회 요청을 보내고, 조회된 목록을 화면에 갱신
+        ajaxPost("/bannerManagement/getBannerList", {}, function(resData) {
+            $('#bannerTable').replaceWith(resData);
+        });
+    }
+
+    /**
+     * 비동기 호출 함수 (POST-일반)
+     * @param {string} url 비동기 호출할 주소
+     * @param {object} params 매개변수
+     * @param {method} callbackMethod 실행될 함수
+     */
+     function ajaxPost(url, formData, callbackMethod) {
+        $.ajax({
+            contentType: 'multipart/form-data',
+            type: 'POST',
+            data: formData,
+            url: url,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                callbackMethod(data);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status == 409) {
+                    alert("에러 처리 문구 수정.");
+                } else {
+                    alert("에러가 발생했습니다. \r\n관리자에게 문의해주십시오.");
+                }
+            }
+        });
+     }
+
+     /**
+     * 비동기 호출 함수 (DELETE-일반)
+     * @param {string} url 비동기 호출할 주소
+     * @param {object} params 매개변수
+     * @param {method} callbackMethod 실행될 함수
+     */
+     function ajaxDelete(url, params, callbackMethod) {
+        $.ajax({
+            contentType: 'application/json',
+            type: 'DELETE',
+            data: JSON.stringify(params),
+            url: url,
+            success : function(data) {
+                callbackMethod(data);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert("에러가 발생했습니다. \r\n관리자에게 문의해주십시오.");
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

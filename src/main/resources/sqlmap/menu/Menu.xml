@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.musinsa.dao.MenuDAO">
+
+    <select id="selectMainMenuList" resultType="menuDVO">
+        SELECT *
+        FROM TB_SYS_MENU
+        WHERE LEVEL = '1'
+        ORDER BY MENU_ORDER
+    </select>
+
+    <select id="selectSubMenuList" parameterType="menuPVO" resultType="menuDVO">
+        SELECT *
+        FROM TB_SYS_MENU
+        WHERE LEVEL = '2'
+        <if test="parentType != null">
+            AND PARENT_TYPE = #{parentType}
+        </if>
+        ORDER BY MENU_ORDER
+    </select>
+
+    <select id="selectMenuList" resultType="menuDVO">
+        SELECT *
+        FROM TB_SYS_MENU
+        ORDER BY LEVEL, MENU_ORDER
+    </select>
+
+    <select id="selectMenuInfo" parameterType="menuPVO" resultType="menuDVO">
+        SELECT *
+        FROM TB_SYS_MENU
+        WHERE 1=1
+        <if test="id != null">
+            AND ID = #{id}
+        </if>
+    </select>
+
+    <select id="selectMenuByName" parameterType="menuPVO" resultType="menuDVO">
+        SELECT *
+        FROM TB_SYS_MENU
+        WHERE 1=1
+        AND MENU_NM = #{menuNm}
+    </select>
+
+    <select id="selectMenuInfoNm" parameterType="menuPVO" resultType="menuDVO">
+        SELECT *
+        FROM TB_SYS_MENU
+        WHERE 1=1
+        AND MENU_NM = #{menuNm}
+    </select>
+
+    <insert id="insertMenu" parameterType="menuPVO">
+        INSERT
+        INTO TB_SYS_MENU
+        (
+            MENU_NM
+            , URL
+            , LEVEL
+            , MENU_ORDER
+            , PARENT_ID
+            , PARENT_TYPE
+            , CHILD_TYPE
+            , REGIST_DT
+        )
+        VALUES
+        (
+            #{menuNm}
+            , #{url}
+            , #{level}
+            , #{menuOrder}
+            , #{parentId}
+            , #{parentType}
+            , #{childType}
+            , date_format(now(), '%Y%m%d%H%i%s')
+        )
+    </insert>
+
+    <update id="updateMenu" parameterType="menuPVO">
+        UPDATE TB_SYS_MENU
+        SET
+            MENU_NM = #{menuNm}
+            , URL = #{url}
+            , LEVEL = #{level}
+            , MENU_ORDER = #{menuOrder}
+            , PARENT_ID = #{parentId}
+            , PARENT_TYPE = #{parentType}
+            , CHILD_TYPE = #{childType}
+        WHERE ID = #{id}
+    </update>
+
+    <delete id="deleteMenu" parameterType="menuPVO">
+        DELETE
+        FROM TB_SYS_MENU
+        WHERE ID = #{id}
+    </delete>
+
+
+</mapper>

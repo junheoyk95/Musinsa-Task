@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu Service</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <style>
+        .menu-container {
+            display: flex;
+            padding-top: 40px;
+        }
+
+        .menu-container .parent-menu {
+            flex: 1;
+        }
+
+        .menu-container .child-menu {
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container" style="padding-top:40px">
+  <h1>무신사 Menu Service</h1>
+  <a href="/menuManagement" style="font-size: 20px; padding-left:10px">메뉴 관리</a>
+  <br>
+  <a href="/bannerManagement" style="font-size: 20px; padding-left:10px">배너 관리</a>
+  <div class="menu-container">
+    <div class="parent-menu">
+      <h2 class="lg-title">상위 메뉴</h2>
+      <ul class="list-group">
+        <li th:each="menu : ${menuList}" class="list-group-item">
+          <button class="btn btn-primary" th:onclick="selectSubMenuList(/*[[${menu.parentType}]]*/, /*[[${menu.menuOrder}]]*/)" th:text="${menu.menuNm}"></button>
+        </li>
+      </ul>
+    </div>
+    <div class="child-menu">
+      <h2 class="lg-title">하위 메뉴</h2>
+      <div id="subMenuTable">
+        <div th:if="${bannerList != null and !bannerList.isEmpty()}">
+          <ul>
+            <li th:each="banner : ${bannerList}">
+              <a th:href="${banner.url}">
+              <img th:src="${banner.image}" alt="Banner Image" width="400" height="200">
+              </a>
+            </li>
+          </ul>
+        </div>
+        <li th:each="subMenu : ${subMenuList}" class="list-group-item">
+          <button class="btn btn-success" th:onclick="moveClothesShop(/*[[${subMenu.parentType}]]*/, /*[[${subMenu.childType}]]*/)"  th:text="${subMenu.menuNm}"></button>
+        </li>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="plugins/jquery/jquery.js"></script>
+
+<script>
+
+    function selectSubMenuList(parentType, menuOrder) {
+
+    	let params = {
+            parentType: parentType,
+            menuOrder: menuOrder
+          }
+
+        ajaxPost("/selectSubMenuList", params, function(resData) {
+        console.log("resData ",resData);
+            $("#subMenuTable").replaceWith(resData);
+         });
+    }
+
+    function moveClothesShop(parentType, childType) {
+
+        window.location.href = `/clothesShop?parentType=${parentType}&childType=${childType}`;
+    }
+
+    /**
+     * 비동기 호출 함수 (POST-일반)
+     * @param {string} url 비동기 호출할 주소
+     * @param {object} params 매개변수
+     * @param {method} callbackMethod 실행될 함수
+     */
+     function ajaxPost(url, params, callbackMethod) {
+        $.ajax({
+            contentType: 'application/json',
+            type: 'POST',
+            data: JSON.stringify(params),
+            url: url,
+            success : function(data, status, xhr) {
+                //callbackMethod(xhr.status);
+                callbackMethod(data);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+
+                if(jqXHR.status == 409) {
+                  alert("에러 처리 문구 수정.");
+                }else {
+                  alert("에러가 발생했습니다. \r\n관리자에게 문의해주십시오.");
+                }
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>
